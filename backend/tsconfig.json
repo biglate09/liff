@@ -5,10 +5,11 @@
     "module": "commonjs",
     "lib": ["esnext"],
     "noEmit": true,
+    "baseUrl": "../",
     "typeRoots": ["node_modules/@types", "types"],
-    "rootDir": "api",
+    "rootDir": "src",
     "plugins": [{ "name": "nexus/typescript-language-service" }],
     "esModuleInterop": true
   },
-  "include": ["api", "types.d.ts"]
+  "include": ["src", "types.d.ts"]
 }

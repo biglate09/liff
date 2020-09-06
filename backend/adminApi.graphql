@@ -46,17 +46,6 @@ type LogUser {
   id: String!
 }
 
-input LogUserCreateManyWithoutUserInput {
-  connect: [LogUserWhereUniqueInput!]
-  create: [LogUserCreateWithoutUserInput!]
-}
-
-input LogUserCreateWithoutUserInput {
-  createdAt: DateTime
-  id: String
-  role: UserRole!
-}
-
 input LogUserListRelationFilter {
   every: LogUserWhereInput
   none: LogUserWhereInput
@@ -72,15 +61,6 @@ input LogUserWhereInput {
   role: UserRole
   user: UserWhereInput
   userId: StringFilter
-}
-
-input LogUserWhereUniqueInput {
-  id: String
-  userId: String
-}
-
-type Mutation {
-  createOneUser(data: UserCreateInput!): User!
 }
 
 input NestedDateTimeFilter {
@@ -134,7 +114,12 @@ input NestedStringNullableFilter {
 }
 
 type Query {
-  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, where: UserWhereInput): [User!]!
+  users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: [UserOrderByInput!], where: UserWhereInput): [User!]!
+}
+
+enum SortOrder {
+  asc
+  desc
 }
 
 input StringFilter {
@@ -163,24 +148,6 @@ input StringNullableFilter {
   not: NestedStringNullableFilter
   notIn: [String!]
   startsWith: String
-}
-
-input TaskCreateManyWithoutUserInput {
-  connect: [TaskWhereUniqueInput!]
-  create: [TaskCreateWithoutUserInput!]
-}
-
-input TaskCreateWithoutUserInput {
-  countTime: Int!
-  createdAt: DateTime
-  finishTime: DateTime!
-  id: String
-  name: String!
-  priority: Int!
-  status: TaskStatus!
-  total: Int!
-  updatedAt: DateTime
-  updatedBy: String!
 }
 
 input TaskListRelationFilter {
@@ -215,26 +182,19 @@ input TaskWhereInput {
   user: UserWhereInput
 }
 
-input TaskWhereUniqueInput {
-  createdBy: String
-  id: String
-}
-
 type User {
   id: String!
   name: String
 }
 
-input UserCreateInput {
-  createdAt: DateTime
-  enableStatus: EnableStatus!
-  id: String
-  LogUser: LogUserCreateManyWithoutUserInput
-  name: String
-  password: String!
-  Task: TaskCreateManyWithoutUserInput
-  updatedAt: DateTime
-  userName: String!
+input UserOrderByInput {
+  createdAt: SortOrder
+  enableStatus: SortOrder
+  id: SortOrder
+  name: SortOrder
+  password: SortOrder
+  updatedAt: SortOrder
+  userName: SortOrder
 }
 
 enum UserRole {

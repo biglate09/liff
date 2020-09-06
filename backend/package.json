@@ -1,0 +1,17 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "nexus": "^0.26.1",
+    "nexus-plugin-prisma": "^0.18.1"
+  },
+  "scripts": {
+    "dev": "yarn dev:frontend-api & yarn dev:admin-api",
+    "dev:frontend-api": "ENV=frontend nexus dev -e src/server.ts",
+    "build:frontend-api": "ENV=frontend nexus build -e src/server.ts",
+    "dev:admin-api": "ENV=admin nexus dev -e src/server.ts",
+    "build:admin-api": "ENV=admin nexus build -e src/server.ts"
+  }
+}
