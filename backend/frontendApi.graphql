@@ -19,7 +19,7 @@ type LogUser {
 }
 
 type Query {
-  ok: Boolean!
+  testmsg(userId: String!): Boolean
 }
 
 type User {

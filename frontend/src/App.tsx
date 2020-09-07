@@ -20,7 +20,7 @@ import 'antd/dist/antd.css';
 // } from '@apollo/react-hooks'
 
 const link = createHttpLink({
-  uri: 'http://localhost:4000/graphql',
+  uri: 'http://localhost:112/graphql',
 });
 const cache = new InMemoryCache();
 const outerClient = new ApolloClient({

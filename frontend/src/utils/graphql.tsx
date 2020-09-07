@@ -7,3 +7,9 @@ export const GET_USERS = gql`
     }
   }
 `
+
+export const SEND_MESSAGE = gql`
+  query testmsg($userId : String!){
+    testmsg(userId: $userId)
+  }
+`
