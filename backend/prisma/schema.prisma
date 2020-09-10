@@ -41,14 +41,14 @@ enum BankName {
 }
 
 // MAPPING                = เมื่อ Customer กดสร้าง Job
-// USER_CONFIRMED         = เมื่อ Customer กดเลือก Photographer
+// CUSTOMER_CONFIRMED         = เมื่อ Customer กดเลือก Photographer
 // PHOTOGRAPHER_CONFIRMED = เมื่อ Photographer ยืนยันการรับงาน
 // ADMIN_CONFIRMED        = เมื่อ Admin กดยืนยันว่า Slip ที่ลูกค้าแนบมานั้นถูกต้อง
 // COMPLETED              = เมื่อ Customer กดจบงานหลังจากถ่ายรูปและทำอะไรทุกอย่างเสร็จแล้ว
 // CANCELLED              = เมื่อ Job นั้นเกินเวลา limit ที่กำหนด แต่ status ยังไม่เป็น ADMIN_CONFIRMED หรือ COMPLETED (batch job ?)
 enum JobStatus {
   MAPPING
-  USER_CONFIRMED
+  CUSTOMER_CONFIRMED
   PHOTOGRAPHER_CONFIRMED
   ADMIN_CONFIRMED
   COMPLETED
