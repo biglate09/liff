@@ -1443,7 +1443,7 @@
     body-parser "^1.19.0"
     file-type "^7.7.1"
 
-"@line/liff@^2.3.0", "@line/liff@^2.4.0":
+"@line/liff@^2.3.1":
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/@line/liff/-/liff-2.4.0.tgz#b3f841e8ee390c940e0d937cdb62014214154bcf"
   integrity sha512-krX4kEPDQajz9dvLvnzl8Hfo4m3RYIBO9MWOCytVn6xdEOMGhojwv4SCt7TDke/XPstgO5ft7gwi9le0Afs2CA==
@@ -9825,7 +9825,7 @@ prompts@^2.0.1:
     kleur "^3.0.3"
     sisteransi "^1.0.4"
 
-prop-types@^15.6.2, prop-types@^15.7.2:
+prop-types@^15.5.8, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -10415,17 +10415,17 @@ react-error-overlay@^6.0.7:
   resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-6.0.7.tgz#1dcfb459ab671d53f660a991513cb2f0a0553108"
   integrity sha512-TAv1KJFh3RhqxNvhzxj6LeT5NWklP6rDr2a0jaTfsZ5wSZWHOGeqQyejUp3xxLfPt2UpyJEcVQB/zyPcmonNFA==
 
+react-geolocated@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/react-geolocated/-/react-geolocated-3.0.1.tgz#2ca5c6320127e08fb9d9e7c27d26199435c799a1"
+  integrity sha512-vgHEL9JY4TZ5ZCKdSPLm2qUHQ+2I1Nemc94QVZqfu4lDorRu6JjWHzvnRiGuv1PdEkPgqAEZDxjZ1zcxzFoSqA==
+  dependencies:
+    prop-types "^15.5.8"
+
 react-is@^16.12.0, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.4:
   version "16.13.1"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.13.1.tgz#789729a4dc36de2999dc156dd6c1d9c18cea56a4"
   integrity sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==
-
-react-liff@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/react-liff/-/react-liff-0.5.0.tgz#5d0947c79f7205e1b9914441603074988f253305"
-  integrity sha512-qAxA7DspxPYQ4ayAsNwmXoauZ4e+UetL8hrAeAK4AqW8uN5iR+a76McuVTZUlVp9nbUKKgABaWBmcvFm5pwtrg==
-  optionalDependencies:
-    "@line/liff" "^2.3.0"
 
 react-router-dom@^5.2.0:
   version "5.2.0"
@@ -11900,6 +11900,11 @@ svgo@^1.0.0, svgo@^1.2.2:
     stable "^0.1.8"
     unquote "~1.1.1"
     util.promisify "~1.0.0"
+
+sweetalert2@^9.17.1:
+  version "9.17.2"
+  resolved "https://registry.yarnpkg.com/sweetalert2/-/sweetalert2-9.17.2.tgz#7f33ce157a64c303d2ca98863c9a3f437e5f1187"
+  integrity sha512-HkpPZVMYsnhFUBLdy/LvkU9snggKP3VAuSVnPhVXjxdg02lWbFx0W8H3m7A+WMWw2diXZS1wIa4m67XkNxdvew==
 
 symbol-observable@^1.0.2, symbol-observable@^1.2.0:
   version "1.2.0"

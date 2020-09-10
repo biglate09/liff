@@ -6,7 +6,8 @@
   "dependencies": {
     "@line/liff": "^2.3.1",
     "nexus": "^0.26.1",
-    "nexus-plugin-prisma": "^0.18.1"
+    "nexus-plugin-prisma": "^0.18.1",
+    "pg": "^8.3.3"
   },
   "scripts": {
     "dev": "yarn dev:frontend-api & yarn dev:admin-api",

@@ -3,17 +3,17 @@ import { prisma } from "nexus-plugin-prisma";
 use(prisma({ features: { crud: true } }));
 console.log(process.env.ENV);
 let isAdmin = process.env.ENV === "admin";
-if (isAdmin) {
-  schema.extendType({
-    type: "Query",
-    definition: (t) => {
-      t.crud.users({
-        filtering: true,
-        ordering: true,
-      });
-    },
-  });
-}
+// if (isAdmin) {
+//   schema.extendType({
+//     type: "Query",
+//     definition: (t) => {
+//       t.crud.users({
+//         filtering: true,
+//         ordering: true,
+//       });
+//     },
+//   });
+// }
 //Run server
 if (isAdmin) {
   settings.change({
