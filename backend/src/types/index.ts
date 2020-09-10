@@ -2,22 +2,7 @@ import { schema } from "nexus";
 import { arg } from "nexus/components/schema";
 const line = require('@line/bot-sdk');
 
-schema.objectType({
-  name: "User",
-  definition(t) {
-    t.model.id();
-    t.model.name();
-  },
-});
-
-schema.objectType({
-  name: "LogUser",
-  definition(t) {
-    t.model.id();
-  },
-});
-
-schema.queryType({
+schema.mutationType({
   definition(t) {
     t.field('testmsg', {
       type: 'Boolean',
