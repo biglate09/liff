@@ -73,7 +73,7 @@ enum JobMappingStatus {
 model Customer {
   id          String   @default(uuid()) @id
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   userId      String   @unique
   displayName String
   email       String
@@ -83,7 +83,7 @@ model Customer {
 model Photographer {
   id                String    @default(uuid()) @id
   createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @default(now())
+  updatedAt         DateTime  @default(now()) @updatedAt
   userId            String    @unique
   bankAccountNumber String
   bankAccountName   String
@@ -110,7 +110,7 @@ model Portfolio {
 model BankAccount {
   id                String   @default(uuid()) @id
   createdAt         DateTime @default(now())
-  updatedAt         DateTime @default(now())
+  updatedAt         DateTime @default(now()) @updatedAt
   bankAccountNumber String
   bankAccountName   String
   bank              BankName
@@ -119,7 +119,8 @@ model BankAccount {
 model Job {
   id             String        @default(uuid()) @id
   createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
+  jobName        String
   jobNo          Int           @default(autoincrement())
   jobType        JobType       @relation(fields: [jobTypeId], references: [id])
   jobTypeId      String
@@ -144,16 +145,17 @@ model Job {
 model JobType {
   id          String   @default(uuid()) @id
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
   jobTypeName String
   jobs        Job[]
 }
 
 model JobMapping {
   jobId          String
+  photographer   Photographer     @relation(fields: [photographerId], references: [id])
   photographerId String
   createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @default(now())
+  updatedAt      DateTime         @default(now()) @updatedAt
   price          Float
   status         JobMappingStatus
   @@id([jobId, photographerId])
@@ -161,7 +163,7 @@ model JobMapping {
 
 model JobLog {
   jobId       String
-  updatedAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
   updatedBy   String
   updatedRole Role
   jobStatus   JobStatus

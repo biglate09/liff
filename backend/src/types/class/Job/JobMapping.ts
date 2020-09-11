@@ -4,6 +4,7 @@ schema.objectType({
     name: 'JobMapping',
     definition(t) {
         t.model.jobId()
+        t.model.photographer()
         t.model.photographerId()
         t.model.createdAt()
         t.model.updatedAt()

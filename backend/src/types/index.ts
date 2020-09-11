@@ -1,6 +1,7 @@
 import { schema } from "nexus";
 import { PrismaClient } from '@prisma/client'
 import { arg, core, stringArg, intArg, floatArg } from "nexus/components/schema";
+import moment from 'moment';
 const line = require('@line/bot-sdk');
 
 let isAdmin = process.env.ENV === "admin";
@@ -16,7 +17,7 @@ const client = new line.Client({
   channelAccessToken: channelAccessToken
 });
 
-const sendFlexMessage = (toUser: String, message: any) => {
+const sendMessage = (toUser: String, message: any) => {
   return client.pushMessage(toUser, message)
     .then(() => {
       console.log('pushMessage success!')
@@ -89,6 +90,29 @@ schema.queryType({
         return 'HELLO WORLD QUERY'
       }
     })
+
+    //FIND_JOB_MAPPING
+    t.field('findJobMapping', {
+      type: 'JobMapping',
+      args: {
+        jobId: stringArg({ required: true }),
+        photographerId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const jobMapping = await prisma.jobMapping.findOne({
+          where:
+          {
+            jobId_photographerId:
+            {
+              jobId: args.jobId,
+              photographerId: args.photographerId
+            }
+          }
+        })
+
+        return jobMapping
+      }
+    })
   }
 })
 
@@ -107,6 +131,7 @@ schema.mutationType({
       type: 'Boolean',
       args: {
         userId: stringArg({ required: true }),
+        jobName: stringArg({ required: true }),
         jobTypeId: stringArg({ required: true }),
         startJob: dateTimeArg({ type: 'DateTime' }),
         endJob: dateTimeArg({ type: 'DateTime' }),
@@ -156,6 +181,7 @@ schema.mutationType({
                 id: args.jobTypeId,
               },
             },
+            jobName: args.jobName,
             startJob: args.startJob,
             endJob: args.endJob,
             location: args.location,
@@ -188,14 +214,14 @@ schema.mutationType({
         }
 
         //Send flex message to customer (#Poppy1)
-        const messageToUser = [
+        const messageToCustomer = [
           {
             "type": "flex",
             "altText": "คุณค้นหาช่างภาพแล้ว !",
             "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
           }
         ]
-        const sendToUser = await sendFlexMessage(args.userId, messageToUser)
+        const sendToUser = await sendMessage(args.userId, messageToCustomer)
 
         //Send flex message to all photographers (#Poppy2)
         const messageToPhotographers = [
@@ -211,11 +237,378 @@ schema.mutationType({
         console.log(photographers);
 
         for (let pg of photographers) {
-          await sendFlexMessage(pg.userId, messageToPhotographers)
+          await sendMessage(pg.userId, messageToPhotographers)
         }
 
-        return (customer && job && jobLog && sendToUser)
+        return (customer && job && jobLog && sendToUser ? true : false)
       },
+    })
+
+    //CREATE_JOB_MAPPING
+    t.field('createJobMapping', {
+      type: 'Boolean',
+      args: {
+        jobId: stringArg({ required: true }),
+        photographerId: stringArg({ required: true }),
+        price: floatArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const jobMapping = await prisma.jobMapping.create({
+          data: {
+            jobId: args.jobId,
+            price: args.price,
+            status: 'ACCEPTED',
+            photographer: {
+              connect: {
+                id: args.photographerId,
+              },
+            },
+          },
+        })
+
+        let job
+        if (jobMapping) {
+          job = await prisma.job.findOne({
+            where: {
+              id: args.jobId
+            },
+            include: {
+              customer: true
+            }
+          })
+
+          if (job && job.customer) {
+            let messageToPhotographer = [
+              {
+                "type": "text",
+                "text": `ส่งคำขอรับงาน #${job.jobNo} เรียบร้อยกรุณารอการตอบรับจากลูกค้าภายในวันที่ ${moment.utc(job.limit).format('DD/MM/YYYY')}`
+              }
+            ]
+
+            const photographer = await prisma.photographer.findOne({
+              where: {
+                id: args.photographerId
+              }
+            })
+
+            await sendMessage((photographer ? photographer.userId : ''), messageToPhotographer)
+
+            //#Poppy3
+            let messageToCustomer = [
+              {
+                "type": "flex",
+                "altText": "มีช่างภาพสนใจทำงานให้คุณ !",
+                "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+              }
+            ]
+            await sendMessage(job.customer.userId, messageToCustomer)
+          }
+        }
+
+        return (jobMapping && job && jobMapping ? true : false)
+      }
+    })
+
+    //CUSTOMER_CONFIRM_JOB
+    t.field('customerConfirmJob', {
+      type: 'Boolean',
+      args: {
+        jobId: stringArg({ required: true }),
+        photographerId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        let exstingJob, jobMapping, job, jobLog, sendMessageToCustomer, sendMessageToPhotographer;
+        exstingJob = await prisma.job.findOne({
+          where: {
+            id: args.jobId
+          }
+        })
+
+        jobMapping = await prisma.jobMapping.findOne({
+          where: {
+            jobId_photographerId: {
+              jobId: args.jobId,
+              photographerId: args.photographerId
+            }
+          }
+        });
+
+        if (exstingJob && exstingJob.status === 'MAPPING' && jobMapping && jobMapping.status === 'ACCEPTED') {
+          job = await prisma.job.update({
+            where: {
+              id: args.jobId,
+            },
+            data: {
+              status: 'CUSTOMER_CONFIRMED',
+              photographer: {
+                connect: {
+                  id: args.photographerId
+                }
+              }
+            },
+            include: {
+              customer: true,
+              photographer: true
+            }
+          })
+        }
+
+        if (job) {
+          jobLog = await prisma.jobLog.create({
+            data: {
+              jobId: args.jobId,
+              jobStatus: 'CUSTOMER_CONFIRMED',
+              updatedRole: 'CUSTOMER',
+              updatedBy: job.customerId
+            }
+          })
+
+          if (jobLog) {
+            let messageToCustomer = [
+              {
+                "type": "text",
+                "text": `กำลังส่งคำขอไปยังช่างภาพ กรุณารอการตอบรับจากช่างภาพ`
+              },
+              {
+                "type": "text",
+                "text": `คุณพร้อมโอนเงินมัดจำ 50% เป็นจำนวนเงิน ${jobMapping?.price ? jobMapping?.price * 0.5 : 0} บาท ภายใน 24 ชม. หรือไม่`
+              }
+            ]
+
+            sendMessageToCustomer = await sendMessage(job.customer.userId, messageToCustomer)
+
+
+            //#Poppy4
+            let messageToPhotographer = [
+              {
+                "type": "flex",
+                "altText": "ยินดีด้วยลูกค้าสนใจจะจ้างคุณแล้ว !",
+                "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+              }
+            ]
+
+            sendMessageToPhotographer = await sendMessage(job.photographer?.userId || '', messageToPhotographer)
+          }
+        }
+
+        return (job && jobLog && sendMessageToCustomer && sendMessageToPhotographer ? true : false)
+      }
+    })
+
+    //PHOTOGRAPHER_CONFIRM_JOB
+    t.field('photographerConfirmJob', {
+      type: 'Boolean',
+      args: {
+        jobId: stringArg({ required: true }),
+        photographerId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        let exstingJob, jobMapping, job, jobLog, sendMessageToCustomer, sendMessageToPhotographer;
+        exstingJob = await prisma.job.findOne({
+          where: {
+            id: args.jobId
+          }
+        })
+
+        jobMapping = await prisma.jobMapping.findOne({
+          where: {
+            jobId_photographerId: {
+              jobId: args.jobId,
+              photographerId: args.photographerId
+            }
+          }
+        });
+
+        if (exstingJob && exstingJob.status === 'CUSTOMER_CONFIRMED' && jobMapping && jobMapping.status === 'ACCEPTED') {
+
+          job = await prisma.job.update({
+            where: {
+              id: args.jobId,
+            },
+            data: {
+              status: 'PHOTOGRAPHER_CONFIRMED',
+              photographer: {
+                connect: {
+                  id: args.photographerId
+                }
+              }
+            },
+            include: {
+              customer: true,
+              photographer: true
+            }
+          })
+
+          jobMapping = await prisma.jobMapping.update({
+            where: {
+              jobId_photographerId: {
+                jobId: args.jobId,
+                photographerId: args.photographerId
+              }
+            },
+            data: {
+              status: 'CONFIRMED'
+            }
+          })
+        }
+
+        if (job) {
+          jobLog = await prisma.jobLog.create({
+            data: {
+              jobId: args.jobId,
+              jobStatus: 'PHOTOGRAPHER_CONFIRMED',
+              updatedRole: 'PHOTOGRAPHER',
+              updatedBy: args.photographerId
+            }
+          })
+
+          if (jobLog) {
+            //#Poppy5
+            let messageToPhotographer = [
+              {
+                "type": "flex",
+                "altText": "ยืนยันรับงาน กรุณารอรับเงินมัดจำ !",
+                "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+              }
+            ]
+
+            sendMessageToPhotographer = await sendMessage(job.photographer?.userId || '', messageToPhotographer)
+
+            //#Poppy6
+            let messageToCustomer = [
+              {
+                "type": "flex",
+                "altText": "กรุณาโอนเงินมัดจำ เพื่อเริ่มงาน",
+                "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+              }
+            ]
+
+            sendMessageToCustomer = await sendMessage(job.customer.userId, messageToCustomer)
+          }
+        }
+
+        return (job && jobLog && jobMapping && sendMessageToCustomer && sendMessageToPhotographer ? true : false)
+      }
+    })
+
+    //PHOTOGRAPHER_CANCEL_JOB
+    t.field('photographerCancelJob', {
+      type: 'Boolean',
+      args: {
+        jobId: stringArg({ required: true }),
+        photographerId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        let exstingJob, jobMapping, job, jobLog, sendMessageToCustomer, sendMessageToPhotographer;
+
+        jobMapping = await prisma.jobMapping.findOne({
+          where: {
+            jobId_photographerId: {
+              jobId: args.jobId,
+              photographerId: args.photographerId
+            }
+          }
+        });
+
+        if (jobMapping) {
+          jobMapping = await prisma.jobMapping.update({
+            where: {
+              jobId_photographerId: {
+                jobId: args.jobId,
+                photographerId: args.photographerId
+              }
+            },
+            data: {
+              status: 'CANCELLED'
+            }
+          })
+
+          if (jobMapping) {
+            exstingJob = await prisma.job.findOne({
+              where: {
+                id: args.jobId
+              }
+            })
+
+            if (exstingJob && exstingJob.status === 'PHOTOGRAPHER_CONFIRMED' && exstingJob.photographerId === args.photographerId) {
+              job = await prisma.job.update({
+                where: {
+                  id: args.jobId,
+                },
+                data: {
+                  status: 'MAPPING',
+                  photographer: null
+                  // photographer: {
+                  //   connect: {
+                  //     id: undefined
+                  //   }
+                  // }
+                },
+                include: {
+                  customer: true
+                }
+              })
+              if (job) {
+                jobLog = await prisma.jobLog.create({
+                  data: {
+                    jobId: args.jobId,
+                    jobStatus: 'MAPPING',
+                    updatedRole: 'PHOTOGRAPHER',
+                    updatedBy: args.photographerId
+                  }
+                })
+
+                if (jobLog) {
+                  const photographer = await prisma.photographer.findOne({
+                    where: {
+                      id: args.photographerId
+                    }
+                  })
+                  let messageToCustomer: any = [
+                    {
+                      "type": "text",
+                      "text": `ขออภัย คุณ${photographer?.name} ไม่สามารถรับงานของคุณได้ กรุณาเลือกช่างภาพท่านอื่น`,
+                    }
+                  ]
+
+                  const acceptedJobMapping = await prisma.jobMapping.findMany({
+                    where: {
+                      jobId: args.jobId,
+                      status: 'ACCEPTED'
+                    }
+                  })
+
+                  for (let ajm of acceptedJobMapping) {
+                    //#Poppy7
+                    messageToCustomer.push({
+                      "type": "flex",
+                      "altText": "มีช่างภาพสนใจทำงานให้คุณ !",
+                      "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+                    })
+                  }
+
+                  sendMessageToCustomer = await sendMessage(job.customer.userId, messageToCustomer)
+                }
+              }
+            }
+          }
+        } else {
+          jobMapping = await prisma.jobMapping.create({
+            data: {
+              jobId: args.jobId,
+              price: 0,
+              status: 'CANCELLED',
+              photographer: {
+                connect: {
+                  id: args.photographerId,
+                },
+              },
+            },
+          })
+        }
+
+        return (job && jobLog && jobMapping && sendMessageToCustomer && sendMessageToPhotographer ? true : false)
+      }
     })
   }
 })

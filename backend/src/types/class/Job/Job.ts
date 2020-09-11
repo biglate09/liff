@@ -4,6 +4,7 @@ schema.objectType({
     name: 'Job',
     definition(t) {
         t.model.id()
+        t.model.jobName()
         t.model.createdAt()
         t.model.updatedAt()
         t.model.jobNo()
