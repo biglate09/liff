@@ -161,9 +161,9 @@ model JobMapping {
 
 model JobLog {
   jobId       String
-  updateAt    DateTime
+  updatedAt    DateTime
   updatedBy   String
   updatedRole Role
   jobStatus   JobStatus
-  @@id([jobId, updateAt])
+  @@id([jobId, updatedAt])
 }
