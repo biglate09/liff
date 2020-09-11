@@ -74,7 +74,7 @@ model Customer {
   id          String   @default(uuid()) @id
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now())
-  userId      String
+  userId      String   @unique
   displayName String
   email       String
   jobs        Job[]
@@ -84,7 +84,7 @@ model Photographer {
   id                String    @default(uuid()) @id
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @default(now())
-  userId            String
+  userId            String    @unique
   bankAccountNumber String
   bankAccountName   String
   bank              BankName
@@ -117,28 +117,28 @@ model BankAccount {
 }
 
 model Job {
-  id             String       @default(uuid()) @id
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @default(now())
-  jobNo          Int
-  jobType        JobType      @relation(fields: [jobTypeId], references: [id])
+  id             String        @default(uuid()) @id
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now())
+  jobNo          Int           @default(autoincrement())
+  jobType        JobType       @relation(fields: [jobTypeId], references: [id])
   jobTypeId      String
   startJob       DateTime
   endJob         DateTime
   limit          DateTime
   location       String
-  detail         String
+  detail         String?
   tel            String
-  email          String
-  guest          Int
+  email          String?
+  guest          Int?
   startBudget    Float
   endBudget      Float
   status         JobStatus
-  Customer       Customer     @relation(fields: [customerId], references: [id])
+  customer       Customer      @relation(fields: [customerId], references: [id])
   customerId     String
-  Photographer   Photographer @relation(fields: [photographerId], references: [id])
-  photographerId String
-  slip           String
+  photographer   Photographer? @relation(fields: [photographerId], references: [id])
+  photographerId String?
+  slip           String?
 }
 
 model JobType {
@@ -161,7 +161,7 @@ model JobMapping {
 
 model JobLog {
   jobId       String
-  updatedAt    DateTime
+  updatedAt   DateTime  @default(now())
   updatedBy   String
   updatedRole Role
   jobStatus   JobStatus
