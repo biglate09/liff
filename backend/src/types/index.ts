@@ -113,6 +113,42 @@ schema.queryType({
         return jobMapping
       }
     })
+
+    //FIND_PHOTOGRAPHER
+    t.field('findPhotographer', {
+      type: 'Photographer',
+      args: {
+        userId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const photographer = await prisma.photographer.findOne({
+          where:
+          {
+            userId: args.userId
+          }
+        })
+
+        return photographer
+      }
+    })
+
+    //FIND_CUSTOMER
+    t.field('findCustomer', {
+      type: 'Customer',
+      args: {
+        userId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const customer = await prisma.customer.findOne({
+          where:
+          {
+            userId: args.userId
+          }
+        })
+
+        return customer
+      }
+    })
   }
 })
 
@@ -530,19 +566,16 @@ schema.mutationType({
               }
             })
 
-            if (exstingJob && exstingJob.status === 'PHOTOGRAPHER_CONFIRMED' && exstingJob.photographerId === args.photographerId) {
+            if (exstingJob && (exstingJob.status === 'PHOTOGRAPHER_CONFIRMED' || exstingJob.status === 'CUSTOMER_CONFIRMED') && exstingJob.photographerId === args.photographerId) {
               job = await prisma.job.update({
                 where: {
                   id: args.jobId,
                 },
                 data: {
                   status: 'MAPPING',
-                  photographer: null
-                  // photographer: {
-                  //   connect: {
-                  //     id: undefined
-                  //   }
-                  // }
+                  photographer: {
+                    disconnect: true
+                  }
                 },
                 include: {
                   customer: true
@@ -608,6 +641,64 @@ schema.mutationType({
         }
 
         return (job && jobLog && jobMapping && sendMessageToCustomer && sendMessageToPhotographer ? true : false)
+      }
+    })
+
+    //MANAGE_PHOTOGRAPHER
+    t.field('managePhotographer', {
+      type: 'Boolean',
+      args: {
+        userId: stringArg({ required: true }),
+        bankAccountNumber: stringArg({ required: true }),
+        bankAccountName: stringArg({ required: true }),
+        bank: stringArg({ required: true }),
+        imgUrl: stringArg({ required: true }),
+        name: stringArg({ required: true }),
+        tel: stringArg({ required: true }),
+        email: stringArg({ required: true }),
+        moreInfoUrl: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const photographer = await prisma.photographer.findOne({
+          where:
+          {
+            userId: args.userId
+          }
+        })
+
+        if (photographer) {
+          await prisma.photographer.update({
+            where: {
+              userId: args.userId
+            },
+            data: {
+              bankAccountNumber: args.bankAccountNumber,
+              bankAccountName: args.bankAccountName,
+              // bank: args.bank,
+              imgUrl: args.imgUrl,
+              name: args.name,
+              tel: args.tel,
+              email: args.email,
+              moreInfoURL: args.moreInfoUrl
+            }
+          })
+        } else {
+          await prisma.photographer.create({
+            data: {
+              userId: args.userId,
+              bankAccountNumber: args.bankAccountNumber,
+              bankAccountName: args.bankAccountName,
+              // bank: args.bank,
+              imgUrl: args.imgUrl,
+              name: args.name,
+              tel: args.tel,
+              email: args.email,
+              moreInfoURL: args.moreInfoUrl
+            }
+          })
+        }
+        //send flex ?
+        return true
       }
     })
   }
