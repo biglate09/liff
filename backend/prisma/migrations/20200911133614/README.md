@@ -1,131 +1,19 @@
-# Migration `20200910132447`
+# Migration `20200911133614`
 
-This migration has been generated at 9/10/2020, 8:24:47 PM.
+This migration has been generated at 9/11/2020, 8:36:14 PM.
 You can check out the [state of the schema](./schema.prisma) after the migration.
 
 ## Database Steps
 
 ```sql
-CREATE TYPE "public"."BankName" AS ENUM ('KBANK', 'DBK', 'BBL', 'KTB', 'BAY', 'KKP', 'JPMCB', 'CITI', 'CIMB', 'SMBT', 'SMBC', 'TMB', 'TISCO', 'TCR', 'SCB', 'TBANK', 'BNPP', 'BAAC', 'MIZUHO', 'MEGA', 'UOBT', 'LHBANK', 'SCBT', 'BOC', 'BOFA', 'GSB', 'GHB', 'ISBT', 'ICBCT', 'HSBC')
 
-CREATE TYPE "public"."JobStatus" AS ENUM ('MAPPING', 'USER_CONFIRMED', 'PHOTOGRAPHER_CONFIRMED', 'ADMIN_CONFIRMED', 'COMPLETED', 'CANCELLED')
-
-CREATE TYPE "public"."Role" AS ENUM ('ADMIN', 'CUSTOMER', 'PHOTOGRAPHER')
-
-CREATE TYPE "public"."JobMappingStatus" AS ENUM ('ACCEPTED', 'CANCELLED', 'CONFIRMED')
-
-CREATE TABLE "public"."Customer" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"userId" text   NOT NULL ,
-"displayName" text   NOT NULL ,
-"email" text   NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."Photographer" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"userId" text   NOT NULL ,
-"bankAccountNumber" text   NOT NULL ,
-"bankAccountName" text   NOT NULL ,
-"bank" "BankName"  NOT NULL ,
-"imgUrl" text   NOT NULL ,
-"name" text   NOT NULL ,
-"tel" text   NOT NULL ,
-"email" text   NOT NULL ,
-"moreInfoURL" text   NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."Portfolio" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"photographerId" text   NOT NULL ,
-"imgUrl" text []  ,
-"info" text   NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."BankAccount" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"bankAccountNumber" text   NOT NULL ,
-"bankAccountName" text   NOT NULL ,
-"bank" "BankName"  NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."Job" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"jobNo" integer   NOT NULL ,
-"jobTypeId" text   NOT NULL ,
-"startJob" timestamp(3)   NOT NULL ,
-"endJob" timestamp(3)   NOT NULL ,
-"limit" timestamp(3)   NOT NULL ,
-"location" text   NOT NULL ,
-"detail" text   NOT NULL ,
-"tel" text   NOT NULL ,
-"email" text   NOT NULL ,
-"guest" integer   NOT NULL ,
-"startBudget" Decimal(65,30)   NOT NULL ,
-"endBudget" Decimal(65,30)   NOT NULL ,
-"status" "JobStatus"  NOT NULL ,
-"customerId" text   NOT NULL ,
-"photographerId" text   NOT NULL ,
-"slip" text   NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."JobType" (
-"id" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"jobTypeName" text   NOT NULL ,
-PRIMARY KEY ("id")
-)
-
-CREATE TABLE "public"."JobMapping" (
-"jobId" text   NOT NULL ,
-"photographerId" text   NOT NULL ,
-"createdAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"updatedAt" timestamp(3)   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-"price" Decimal(65,30)   NOT NULL ,
-"status" "JobMappingStatus"  NOT NULL ,
-PRIMARY KEY ("jobId","photographerId")
-)
-
-CREATE TABLE "public"."JobLog" (
-"jobId" text   NOT NULL ,
-"updateAt" timestamp(3)   NOT NULL ,
-"updatedBy" text   NOT NULL ,
-"updatedRole" "Role"  NOT NULL ,
-"jobStatus" "JobStatus"  NOT NULL ,
-PRIMARY KEY ("jobId","updateAt")
-)
-
-CREATE UNIQUE INDEX "Portfolio_photographerId_unique" ON "public"."Portfolio"("photographerId")
-
-ALTER TABLE "public"."Portfolio" ADD FOREIGN KEY ("photographerId")REFERENCES "public"."Photographer"("id") ON DELETE CASCADE ON UPDATE CASCADE
-
-ALTER TABLE "public"."Job" ADD FOREIGN KEY ("jobTypeId")REFERENCES "public"."JobType"("id") ON DELETE CASCADE ON UPDATE CASCADE
-
-ALTER TABLE "public"."Job" ADD FOREIGN KEY ("customerId")REFERENCES "public"."Customer"("id") ON DELETE CASCADE ON UPDATE CASCADE
-
-ALTER TABLE "public"."Job" ADD FOREIGN KEY ("photographerId")REFERENCES "public"."Photographer"("id") ON DELETE CASCADE ON UPDATE CASCADE
 ```
 
 ## Changes
 
 ```diff
 diff --git schema.prisma schema.prisma
-migration ..20200910132447
+migration ..20200911133614
 --- datamodel.dml
 +++ datamodel.dml
 @@ -1,0 +1,169 @@
