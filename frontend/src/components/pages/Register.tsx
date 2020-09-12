@@ -14,7 +14,7 @@ import {
   Upload
 } from 'antd';
 import liffHelper from '../../utils/liffHelper';
-import { SEND_MESSAGE } from '../../utils/graphql';
+// import { SEND_MESSAGE } from '../../utils/graphql';
 
 const Register = () => {
 
@@ -29,15 +29,15 @@ const Register = () => {
   // const [sendMessage, { called, loading, data }] = useLazyQuery(
   //   SEND_MESSAGE
   // );
-  const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
-    // fetchPolicy: 'network-only',
-    onCompleted:(sre)=>{
-      window.alert('success')
-    },
-    onError: (err) => {
-      window.alert(err)
-    }
-  });
+  // const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
+  //   // fetchPolicy: 'network-only',
+  //   onCompleted:(sre)=>{
+  //     window.alert('success')
+  //   },
+  //   onError: (err) => {
+  //     window.alert(err)
+  //   }
+  // });
 
   const normFile = (e:any) => {
     console.log('Upload event:', e);

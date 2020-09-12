@@ -10,7 +10,7 @@ import {
 import { Form, Input, Button, Checkbox } from 'antd';
 // import liff from '@line/liff';
 import liffHelper from '../../utils/liffHelper';
-import { SEND_MESSAGE } from '../../utils/graphql';
+// import { SEND_MESSAGE } from '../../utils/graphql';
 
 const Quotation = () => {
 
@@ -25,15 +25,15 @@ const Quotation = () => {
   // const [sendMessage, { called, loading, data }] = useLazyQuery(
   //   SEND_MESSAGE
   // );
-  const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
-    // fetchPolicy: 'network-only',
-    onCompleted:(sre)=>{
-      window.alert('success')
-    },
-    onError: (err) => {
-      window.alert(err)
-    }
-  });
+  // const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
+  //   // fetchPolicy: 'network-only',
+  //   onCompleted:(sre)=>{
+  //     window.alert('success')
+  //   },
+  //   onError: (err) => {
+  //     window.alert(err)
+  //   }
+  // });
 
   return (
     <body>
@@ -44,9 +44,9 @@ const Quotation = () => {
         <p style={{ marginBottom: '0' }}>เสนอราคา* (บาท / วัน)</p>
         <input style={{ border: '1px solid #c6c3b2', width: '100%', marginTop: '0.5rem', fontSize: '1.1em', padding: '0.5rem' }} type="number" pattern="\d*" placeholder="กรุณาระบุราคาที่ต้องการ" /><br />
         <div style={{ textAlign: 'center' }}>
-          {data}
+          {/* {data} */}
           {/* <button onClick={() => test()} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button> */}
-          <button onClick={() => sendQuery({variables: { userId: userId }})} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button>
+          {/* <button onClick={() => sendQuery({variables: { userId: userId }})} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button> */}
         </div>
       </div>
     </body>

@@ -35,6 +35,19 @@ const Home = () => {
     }
   });
 
+  // async function test() {
+  //   const response = await fetch('https://jsonplaceholder.typicode.com/users', {
+  //     method: 'POST',
+  //     body: JSON.stringify({}),
+  //     headers: {
+  //       "Content-type": "application/json; charset=UTF-8"
+  //     }
+  //   });
+  //   fetch("https://api.example.com/items")
+  //     .then(res => res.json())
+  // }
+
+
   return (
     <body>
       <title>กำหนดราคา #0001</title>
@@ -44,8 +57,12 @@ const Home = () => {
         <p style={{ marginBottom: '0' }}>เสนอราคา* (บาท / วัน)</p>
         <input style={{ border: '1px solid #c6c3b2', width: '100%', marginTop: '0.5rem', fontSize: '1.1em', padding: '0.5rem' }} type="number" pattern="\d*" placeholder="กรุณาระบุราคาที่ต้องการ" /><br />
         <div style={{ textAlign: 'center' }}>
-          {data}
-          {/* <button onClick={() => test()} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button> */}
+          {/* {data} */}
+          {/* <button onClick={()=>{
+            fetch("http://api.789betting.com/api/health-check")
+              .then(res => window.alert(res.json()))
+              .catch(err => window.alert(err))
+          }} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button> */}
           <button onClick={() => sendQuery({variables: { userId: userId }})} style={{ backgroundColor: '#013490', color: 'white', padding: '1rem', borderRadius: '0.5rem', fontSize: '1.2em', marginTop: '1rem' }}>รับงานและเสนอราคา</button>
         </div>
       </div>

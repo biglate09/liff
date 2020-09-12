@@ -63,14 +63,3 @@ export const SEND_MESSAGE = gql`
     testmsg(userId: $userId)
   }
 `
-
-export const FIND_JOB_TYPES = gql`
-  query {
-    jobTypes{
-      id
-      createdAt
-      updatedAt
-      jobTypeName
-    }
-  }
-`

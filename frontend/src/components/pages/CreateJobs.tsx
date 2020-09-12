@@ -18,23 +18,59 @@ import {
   } from 'antd';
 // import liff from '@line/liff';
 import liffHelper from '../../utils/liffHelper';
-import { SEND_MESSAGE } from '../../utils/graphql';
+import { FIND_JOB_TYPES, CREATE_JOB } from '../../utils/graphql';
 
 const timeFormat = 'HH:mm';
 const { TextArea } = Input;
 
 const CreateJobs = () => {
-  const [userId, setUserId] = useState('U1a85d09a5b0f102277500c1f1b2026a8')
+  // line user id poppy: U1a85d09a5b0f102277500c1f1b2026a8
+  const [userId, setUserId] = useState('')
   liffHelper.getProfile()
     .then(profile => {
       console.log('profile', profile)
+      window.alert(JSON.stringify(profile))
       setUserId(profile.userId)
     });
-
+  
+  const { loading: jobloading, error, data: jobtype } = useQuery(FIND_JOB_TYPES)
+  console.log(jobtype);
   // const [sendMessage, { called, loading, data }] = useLazyQuery(
   //   SEND_MESSAGE
   // );
-  const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
+  // const [sendQuery, { loading, data}] = useMutation(SEND_MESSAGE, {
+  //   // fetchPolicy: 'network-only',
+  //   onCompleted:(sre)=>{
+  //     window.alert('success')
+  //   },
+  //   onError: (err) => {
+  //     window.alert(err)
+  //   }
+  // });
+
+  const onFinish = (values:any) => {
+    console.log(values);
+    CREATE_JOB_QUERY({variables:{
+      userId: userId, 
+      // $jobName: String!, 
+      // $jobTypeId: String!, 
+      // $startJob: DateTime,
+      // $endJob: DateTime,
+      // $location: String!,
+      // $guest: Int,
+      // $detail: String,
+      // $startBudget: Float!,
+      // $endBudget: Float!,
+      // $tel: String!,
+      // $email: String!,
+      // $limit: DateTime,
+      // $displayName: String!,
+      // $lineEmail: String!
+    }})
+    // ***** ยังไม่ได้ validate form
+  };
+
+  const [CREATE_JOB_QUERY, { loading, data}] = useMutation(CREATE_JOB, {
     // fetchPolicy: 'network-only',
     onCompleted:(sre)=>{
       window.alert('success')
@@ -44,10 +80,7 @@ const CreateJobs = () => {
     }
   });
 
-  const onFinish = (values:any) => {
-    console.log(values);
-    // ***** ยังไม่ได้ validate form
-  };
+  // const jobType = ['wedding','pre wedding']
 
   return (
     <body>
@@ -55,18 +88,21 @@ const CreateJobs = () => {
       <div style={{ margin: '1.5rem' }}>
         <p style={{ fontSize: '1.5em', fontWeight: 'bold', marginTop: '1rem', marginBottom: '0' }}>กรุณาระบุรายละเอียดงานของคุณ</p>
         <Form onFinish={onFinish}>
+          {JSON.stringify(jobtype)}
             <Form.Item label="ประเภทงาน"
             name="jobType"
             rules={[{ required: true, message: 'กรุณาเลือกประเภทงาน' }]}>
             <Select placeholder="กรุณาเลือกประเภทของงาน">
-              <Select.Option value="wedding">งานแต่งงาน</Select.Option>
+              {/* {jobtype.map((option) => (
+                <Select.Option key={option.id} value={option.id}>{option.jobTypeName}</Select.Option>
+              ))} */}
             </Select>
             </Form.Item>
             <Form.Item label="วันเริ่มงาน">
             <Input.Group compact>
               <Form.Item name={['startJob', 'date']}
               rules={[{ required: true, message: 'กรุณาระบุวันเริ่มงาน' }]}>
-                <DatePicker onChange={()=>{}} />
+                <DatePicker onChange={()=>{}} disabledDate={d => !d || d.isBefore(Date.now())} />
               </Form.Item>
               <Form.Item name={['startJob', 'time']}>
                 <TimePicker format={timeFormat} defaultValue={moment('00:00', timeFormat)}/>

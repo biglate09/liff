@@ -2,6 +2,70 @@
 ### Do not make changes to this file directly
 
 
+type BankAccount {
+  bank: BankName!
+  bankAccountName: String!
+  bankAccountNumber: String!
+  createdAt: DateTime!
+  id: String!
+  updatedAt: DateTime!
+}
+
+enum BankName {
+  BAAC
+  BAY
+  BBL
+  BNPP
+  BOC
+  BOFA
+  CIMB
+  CITI
+  DBK
+  GHB
+  GSB
+  HSBC
+  ICBCT
+  ISBT
+  JPMCB
+  KBANK
+  KKP
+  KTB
+  LHBANK
+  MEGA
+  MIZUHO
+  SCB
+  SCBT
+  SMBC
+  SMBT
+  TBANK
+  TCR
+  TISCO
+  TMB
+  UOBT
+}
+
+type Customer {
+  createdAt: DateTime!
+  displayName: String!
+  email: String!
+  id: String!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+input CustomerWhereInput {
+  AND: [CustomerWhereInput!]
+  createdAt: DateTimeFilter
+  displayName: StringFilter
+  email: StringFilter
+  id: StringFilter
+  jobs: JobListRelationFilter
+  NOT: [CustomerWhereInput!]
+  OR: [CustomerWhereInput!]
+  updatedAt: DateTimeFilter
+  userId: StringFilter
+}
+
 """
 A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
 `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
@@ -9,15 +73,375 @@ A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
 """
 scalar DateTime
 
+input DateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input FloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+input IntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+type Job {
+  createdAt: DateTime!
+  customer: Customer!
+  customerId: String!
+  detail: String
+  email: String
+  endBudget: Float!
+  endJob: DateTime!
+  guest: Int
+  id: String!
+  jobName: String!
+  jobNo: Int!
+  jobType: JobType!
+  jobTypeId: String!
+  limit: DateTime!
+  location: String!
+  photographer: Photographer
+  photographerId: String
+  slip: String
+  startBudget: Float!
+  startJob: DateTime!
+  status: JobStatus!
+  tel: String!
+  updatedAt: DateTime!
+}
+
+input JobListRelationFilter {
+  every: JobWhereInput
+  none: JobWhereInput
+  some: JobWhereInput
+}
+
+type JobLog {
+  jobId: String!
+  jobStatus: JobStatus!
+  updatedAt: DateTime!
+  updatedBy: String!
+  updatedRole: Role!
+}
+
+type JobMapping {
+  createdAt: DateTime!
+  jobId: String!
+  photographer: Photographer!
+  photographerId: String!
+  price: Float!
+  status: JobMappingStatus!
+  updatedAt: DateTime!
+}
+
+input JobMappingListRelationFilter {
+  every: JobMappingWhereInput
+  none: JobMappingWhereInput
+  some: JobMappingWhereInput
+}
+
+enum JobMappingStatus {
+  ACCEPTED
+  CANCELLED
+  CONFIRMED
+}
+
+input JobMappingWhereInput {
+  AND: [JobMappingWhereInput!]
+  createdAt: DateTimeFilter
+  jobId: StringFilter
+  NOT: [JobMappingWhereInput!]
+  OR: [JobMappingWhereInput!]
+  photographer: PhotographerWhereInput
+  photographerId: StringFilter
+  price: FloatFilter
+  status: JobMappingStatus
+  updatedAt: DateTimeFilter
+}
+
+enum JobStatus {
+  ADMIN_CONFIRMED
+  CANCELLED
+  COMPLETED
+  CUSTOMER_CONFIRMED
+  MAPPING
+  PHOTOGRAPHER_CONFIRMED
+}
+
+type JobType {
+  createdAt: DateTime!
+  id: String!
+  jobTypeName: String!
+  updatedAt: DateTime!
+}
+
+input JobTypeOrderByInput {
+  createdAt: SortOrder
+  id: SortOrder
+  jobTypeName: SortOrder
+  updatedAt: SortOrder
+}
+
+input JobTypeWhereInput {
+  AND: [JobTypeWhereInput!]
+  createdAt: DateTimeFilter
+  id: StringFilter
+  jobs: JobListRelationFilter
+  jobTypeName: StringFilter
+  NOT: [JobTypeWhereInput!]
+  OR: [JobTypeWhereInput!]
+  updatedAt: DateTimeFilter
+}
+
+input JobTypeWhereUniqueInput {
+  id: String
+}
+
+input JobWhereInput {
+  AND: [JobWhereInput!]
+  createdAt: DateTimeFilter
+  customer: CustomerWhereInput
+  customerId: StringFilter
+  detail: StringNullableFilter
+  email: StringNullableFilter
+  endBudget: FloatFilter
+  endJob: DateTimeFilter
+  guest: IntNullableFilter
+  id: StringFilter
+  jobName: StringFilter
+  jobNo: IntFilter
+  jobType: JobTypeWhereInput
+  jobTypeId: StringFilter
+  limit: DateTimeFilter
+  location: StringFilter
+  NOT: [JobWhereInput!]
+  OR: [JobWhereInput!]
+  photographer: PhotographerWhereInput
+  photographerId: StringNullableFilter
+  slip: StringNullableFilter
+  startBudget: FloatFilter
+  startJob: DateTimeFilter
+  status: JobStatus
+  tel: StringFilter
+  updatedAt: DateTimeFilter
+}
+
 """
 The `JSON` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
 """
 scalar Json
 
 type Mutation {
-  testmsg(userId: String!): Boolean
+  createJob(detail: String, displayName: String!, email: String, endBudget: Float!, endJob: DateTime, guest: Int, jobName: String!, jobTypeId: String!, limit: DateTime, lineEmail: String!, location: String!, startBudget: Float!, startJob: DateTime, tel: String!, userId: String!): Boolean
+  createJobMapping(jobId: String!, photographerId: String!, price: Float!): Boolean
+  customerConfirmJob(jobId: String!, photographerId: String!): Boolean
+  helloworld: String
+  managePhotographer(bank: String!, bankAccountName: String!, bankAccountNumber: String!, email: String!, imgUrl: String!, moreInfoUrl: String!, name: String!, tel: String!, userId: String!): Boolean
+  photographerCancelJob(jobId: String!, photographerId: String!): Boolean
+  photographerConfirmJob(jobId: String!, photographerId: String!): Boolean
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input NestedFloatFilter {
+  equals: Float
+  gt: Float
+  gte: Float
+  in: [Float!]
+  lt: Float
+  lte: Float
+  not: NestedFloatFilter
+  notIn: [Float!]
+}
+
+input NestedIntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+input NestedStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NestedStringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+type Photographer {
+  bank: BankName!
+  bankAccountName: String!
+  bankAccountNumber: String!
+  createdAt: DateTime!
+  email: String!
+  id: String!
+  imgUrl: String!
+  moreInfoURL: String!
+  name: String!
+  tel: String!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+input PhotographerWhereInput {
+  AND: [PhotographerWhereInput!]
+  bank: BankName
+  bankAccountName: StringFilter
+  bankAccountNumber: StringFilter
+  createdAt: DateTimeFilter
+  email: StringFilter
+  id: StringFilter
+  imgUrl: StringFilter
+  JobMapping: JobMappingListRelationFilter
+  jobs: JobListRelationFilter
+  moreInfoURL: StringFilter
+  name: StringFilter
+  NOT: [PhotographerWhereInput!]
+  OR: [PhotographerWhereInput!]
+  portfolio: PortfolioWhereInput
+  tel: StringFilter
+  updatedAt: DateTimeFilter
+  userId: StringFilter
+}
+
+input PortfolioWhereInput {
+  AND: [PortfolioWhereInput!]
+  createdAt: DateTimeFilter
+  id: StringFilter
+  imgUrl: StringNullableListFilter
+  info: StringFilter
+  NOT: [PortfolioWhereInput!]
+  OR: [PortfolioWhereInput!]
+  photographer: PhotographerWhereInput
+  photographerId: StringFilter
+  updatedAt: DateTimeFilter
 }
 
 type Query {
-  ok: Boolean!
+  findCustomer(userId: String!): Customer
+  findJobMapping(jobId: String!, photographerId: String!): JobMapping
+  findPhotographer(userId: String!): Photographer
+  helloworld: String
+  jobTypes(after: JobTypeWhereUniqueInput, before: JobTypeWhereUniqueInput, first: Int, last: Int, orderBy: [JobTypeOrderByInput!], where: JobTypeWhereInput): [JobType!]!
+}
+
+enum Role {
+  ADMIN
+  CUSTOMER
+  PHOTOGRAPHER
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableListFilter {
+  equals: [String!]
 }
