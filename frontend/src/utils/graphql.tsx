@@ -57,14 +57,18 @@ export const CREATE_JOB = gql`
 `
 
 export const FIND_JOB_MAPPING = gql`
-  query findJobMapping(
-    $jobId: String!,
-    $photographerId: String!
-  ){
+  query findJobMapping($jobId: String!,$photographerId: String!){
     findJobMapping(
       jobId: $jobId,
       photographerId: $photographerId
-    )
+    ){
+      jobId,
+      photographerId,
+      createdAt,
+      updatedAt,
+      price,
+      status
+    }
   }
 `
 
