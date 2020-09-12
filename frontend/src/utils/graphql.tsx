@@ -89,7 +89,7 @@ export const FIND_JOB_MAPPING = gql`
 // `
 
 export const CREATE_JOB_MAPPING = gql`
-  query createJobMapping(
+  mutation createJobMapping(
     $jobId: String!,
     $photographerId: String!,
     $price: Float!
