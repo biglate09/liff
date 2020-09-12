@@ -1,0 +1,77 @@
+{
+    "type": "bubble",
+    "body": {
+      "type": "box",
+      "layout": "vertical",
+      "contents": [
+        {
+          "type": "text",
+          "text": "ประกาศงาน #0001",
+          "size": "sm"
+        },
+        {
+          "type": "text",
+          "text": "ยืนยันการรับงานจากช่างภาพ",
+          "color": "#15B856",
+          "size": "lg",
+          "margin": "xxl",
+          "align": "center",
+          "weight": "bold"
+        },
+        {
+          "type": "text",
+          "text": "กรุณาโอนเงินมัดจำ เพื่อเริ่มงาน",
+          "align": "center"
+        },
+        {
+          "type": "text",
+          "text": "บช. 123456789",
+          "align": "center",
+          "margin": "xxl",
+          "weight": "bold"
+        },
+        {
+          "type": "text",
+          "text": "จำนวน 1,000 บาท (50%)",
+          "align": "center",
+          "weight": "bold"
+        },
+        {
+          "type": "text",
+          "text": "ธนาคารกสิกรไทย",
+          "align": "center",
+          "margin": "xxl"
+        },
+        {
+          "type": "text",
+          "text": "บริษัท PhotographerHub จำกัด",
+          "align": "center"
+        },
+        {
+          "type": "button",
+          "action": {
+            "type": "uri",
+            "label": "ส่งหลักฐานการโอนเงิน",
+            "uri": "http://linecorp.com/"
+          },
+          "style": "primary",
+          "color": "#316BBB",
+          "margin": "xxl"
+        },
+        {
+          "type": "text",
+          "text": "*ทีมงานจะอนุมัติการจ้างหลังจาก ตรวจสอบหลักฐานเรียบร้อยแล้ว",
+          "size": "sm",
+          "action": {
+            "type": "uri",
+            "label": "action",
+            "uri": "http://linecorp.com/"
+          },
+          "margin": "lg",
+          "align": "center",
+          "color": "#F36E0E",
+          "wrap": true
+        }
+      ]
+    }
+  }

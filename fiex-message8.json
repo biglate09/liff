@@ -1,0 +1,136 @@
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ประกาศงาน #0001",
+        "size": "sm",
+        "color": "#000000"
+      },
+      {
+        "type": "text",
+        "text": "ยืนยันการโอน",
+        "size": "xxl",
+        "margin": "lg",
+        "weight": "bold",
+        "align": "center",
+        "color": "#15B856"
+      },
+      {
+        "type": "text",
+        "text": "งานแต่งงาน 1 วัน",
+        "weight": "bold",
+        "size": "xxl",
+        "color": "#000000",
+        "align": "center"
+      },
+      {
+        "type": "text",
+        "text": "จำนวนแขก 200 คน",
+        "size": "md",
+        "color": "#000000",
+        "wrap": true,
+        "margin": "sm"
+      },
+      {
+        "type": "text",
+        "text": "ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM",
+        "size": "xs",
+        "color": "#000000",
+        "wrap": true,
+        "margin": "sm"
+      },
+      {
+        "type": "box",
+        "layout": "vertical",
+        "margin": "xxl",
+        "spacing": "sm",
+        "contents": [
+          {
+            "type": "text",
+            "text": "ระยะเวลา",
+            "weight": "bold",
+            "size": "sm",
+            "color": "#000000"
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "เริ่ม 15/08/2020",
+                "size": "sm",
+                "color": "#000000",
+                "flex": 0
+              },
+              {
+                "type": "text",
+                "text": "07:00 น.",
+                "size": "sm",
+                "color": "#000000",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              {
+                "type": "text",
+                "text": "ถึง 15/08/2020",
+                "size": "sm",
+                "color": "#000000",
+                "flex": 0
+              },
+              {
+                "type": "text",
+                "text": "17:00 น.",
+                "size": "sm",
+                "color": "#000000",
+                "align": "end"
+              }
+            ]
+          },
+          {
+            "type": "text",
+            "text": "2,000 บาท / วัน",
+            "weight": "bold",
+            "size": "lg",
+            "margin": "lg",
+            "color": "#000000",
+            "align": "center"
+          },
+          {
+            "type": "button",
+            "style": "primary",
+            "action": {
+              "type": "uri",
+              "label": "แจ้งจบงาน",
+              "uri": "https://liff.line.me/1654887993-95d05znD"
+            },
+            "margin": "md",
+            "color": "#316BBB"
+          },
+          {
+            "type": "text",
+            "text": "*สอบถามเพิ่มเติมกรุณาติดต่อ 0821920192",
+            "size": "xs",
+            "flex": 0,
+            "align": "center",
+            "margin": "md"
+          }
+        ]
+      }
+    ]
+  },
+  "styles": {
+    "footer": {
+      "separator": true
+    }
+  }
+}
