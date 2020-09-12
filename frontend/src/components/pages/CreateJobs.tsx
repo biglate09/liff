@@ -38,19 +38,7 @@ const CreateJobs = () => {
     });
 
   const { loading: jobloading, error, data: jobtype } = useQuery(FIND_JOB_TYPES, { fetchPolicy: 'network-only' })
-  // console.log(jobtype && jobtype.jobTypes[0].id);
   const jobType = jobtype && jobtype.jobTypes
-  // const jobType = [{id: '1', jobTypeName: 'แต่งงาน'},{id: '2', jobTypeName:'pre wedding'}]
-  // const jobTypes = jobtype
-  // const jobTypeItems = []
-  // // for (const [index, value] of jobtype && jobtype.jobTypes) {
-  // for (let value of jobtype){
-  //   jobTypeItems.push(<Select.Option key={value.id} value={value.id}>{value.jobTypeName}</Select.Option>)
-  // }
-  // console.log(test)
-  // Object.keys(test).map(key => (
-  //   console.log(key)
-  // ))
 
   const [createJob, { loading, data }] = useMutation(CREATE_JOB, {
     // fetchPolicy: 'network-only',
