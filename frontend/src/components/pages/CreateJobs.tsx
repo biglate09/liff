@@ -27,8 +27,8 @@ const { TextArea } = Input;
 
 const CreateJobs = () => {
   // line user id poppy: U1a85d09a5b0f102277500c1f1b2026a8
-  const [userId, setUserId] = useState('')
-  const [userDisplayName, setUserDisplayName] = useState('')
+  const [userId, setUserId] = useState('U1a85d09a5b0f102277500c1f1b2026a8')
+  const [userDisplayName, setUserDisplayName] = useState('poppy')
   liffHelper.getProfile()
     .then(profile => {
       console.log('profile', profile)
@@ -37,9 +37,20 @@ const CreateJobs = () => {
       setUserDisplayName(profile.displayName)
     });
   
-  // const { loading: jobloading, error, data: jobtype } = useQuery(FIND_JOB_TYPES,{fetchPolicy: 'network-only'})
-  // console.log(jobtype);
-  const jobType = [{id: '1', jobTypeName: 'แต่งงาน'},{id: '2', jobTypeName:'pre wedding'}]
+  const { loading: jobloading, error, data: jobtype } = useQuery(FIND_JOB_TYPES,{fetchPolicy: 'network-only'})
+  // console.log(jobtype && jobtype.jobTypes[0].id);
+  const jobType = jobtype && jobtype.jobTypes
+  // const jobType = [{id: '1', jobTypeName: 'แต่งงาน'},{id: '2', jobTypeName:'pre wedding'}]
+  // const jobTypes = jobtype
+  // const jobTypeItems = []
+  // // for (const [index, value] of jobtype && jobtype.jobTypes) {
+  // for (let value of jobtype){
+  //   jobTypeItems.push(<Select.Option key={value.id} value={value.id}>{value.jobTypeName}</Select.Option>)
+  // }
+  // console.log(test)
+  // Object.keys(test).map(key => (
+  //   console.log(key)
+  // ))
 
   const [CREATE_JOB_QUERY, { loading, data}] = useMutation(CREATE_JOB, {
     // fetchPolicy: 'network-only',
@@ -68,7 +79,7 @@ const CreateJobs = () => {
     console.log(values);
     var sJob = moment(values.startJob.date)
     var eJob = moment(values.endJob.date)
-    var jobName = `งาน${jobType.filter(v => v.id == values.jobType)[0].jobTypeName} ${eJob.diff(sJob, 'days')} วัน`
+    var jobName = `งาน${jobType.filter((v: any) => v.id == values.jobType)[0].jobTypeName} ${eJob.diff(sJob, 'days')} วัน`
 
     CREATE_JOB_QUERY({variables:{
       userId: userId, 
@@ -100,7 +111,7 @@ const CreateJobs = () => {
             rules={[{ required: true, message: 'กรุณาเลือกประเภทงาน' }]}
             >
             <Select placeholder="กรุณาเลือกประเภทของงาน">
-              {jobType.map((option) => (
+              {jobType && jobType.map((option: any) => (
                 <Select.Option key={option.id} value={option.id}>{option.jobTypeName}</Select.Option>
               ))}
             </Select>

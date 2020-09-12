@@ -396,9 +396,7 @@ input PortfolioWhereInput {
 }
 
 type Query {
-  findCustomer(userId: String!): Customer
   findJobMapping(jobId: String!, photographerId: String!): JobMapping
-  findPhotographer(userId: String!): Photographer
   helloworld: String
   jobTypes(after: JobTypeWhereUniqueInput, before: JobTypeWhereUniqueInput, first: Int, last: Int, orderBy: [JobTypeOrderByInput!], where: JobTypeWhereInput): [JobType!]!
 }
