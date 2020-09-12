@@ -96,16 +96,22 @@ schema.queryType({
       type: 'JobMapping',
       args: {
         jobId: stringArg({ required: true }),
-        photographerId: stringArg({ required: true }),
+        photographerUserId: stringArg({ required: true }),
       },
       resolve: async (_, args, ctx) => {
+        const photographer = await prisma.photographer.findOne({
+          where:{
+            userId: args.photographerUserId
+          }
+        })
+
         const jobMapping = await prisma.jobMapping.findOne({
           where:
           {
             jobId_photographerId:
             {
               jobId: args.jobId,
-              photographerId: args.photographerId
+              photographerId: photographer ? photographer.id : ''
             }
           }
         })
