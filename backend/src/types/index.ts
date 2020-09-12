@@ -114,41 +114,44 @@ schema.queryType({
       }
     })
 
-    //FIND_PHOTOGRAPHER
-    t.field('findPhotographer', {
-      type: 'Photographer',
-      args: {
-        userId: stringArg({ required: true }),
-      },
-      resolve: async (_, args, ctx) => {
-        const photographer = await prisma.photographer.findOne({
-          where:
-          {
-            userId: args.userId
-          }
-        })
+    // //FIND_PHOTOGRAPHER
+    // t.field('findPhotographerJobs', {
+    //   type: 'Job',
+    //   args: {
+    //     userId: stringArg({ required: true }),
+    //   },
+    //   resolve: async (_, args, ctx) => {
+    //     const photographer = await prisma.photographer.findOne({
+    //       where:
+    //       {
+    //         userId: args.userId
+    //       },
+    //       include:{
+    //         jobs: true
+    //       }
+    //     })
 
-        return photographer
-      }
-    })
+    //     return photographer.jobs
+    //   }
+    // })
 
-    //FIND_CUSTOMER
-    t.field('findCustomer', {
-      type: 'Customer',
-      args: {
-        userId: stringArg({ required: true }),
-      },
-      resolve: async (_, args, ctx) => {
-        const customer = await prisma.customer.findOne({
-          where:
-          {
-            userId: args.userId
-          }
-        })
+    // //FIND_CUSTOMER
+    // t.field('findCustomer', {
+    //   type: 'Customer',
+    //   args: {
+    //     userId: stringArg({ required: true }),
+    //   },
+    //   resolve: async (_, args, ctx) => {
+    //     const customer = await prisma.customer.findOne({
+    //       where:
+    //       {
+    //         userId: args.userId
+    //       }
+    //     })
 
-        return customer
-      }
-    })
+    //     return customer
+    //   }
+    // })
   }
 })
 
