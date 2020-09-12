@@ -4,15 +4,15 @@ use(prisma({ features: { crud: true } }));
 console.log(process.env.ENV);
 let isAdmin = process.env.ENV === "admin";
 // if (isAdmin) {
-//   schema.extendType({
-//     type: "Query",
-//     definition: (t) => {
-//       t.crud.users({
-//         filtering: true,
-//         ordering: true,
-//       });
-//     },
-//   });
+schema.extendType({
+  type: "Query",
+  definition: (t) => {
+    t.crud.jobTypes({
+      filtering: true,
+      ordering: true,
+    });
+  },
+});
 // }
 //Run server
 if (isAdmin) {
