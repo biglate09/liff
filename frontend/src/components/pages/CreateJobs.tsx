@@ -74,14 +74,14 @@ const CreateJobs = () => {
   //   }
   // });
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     // ***** ยังไม่ได้ validate form
     console.log(values);
     var sJob = moment(values.startJob.date)
     var eJob = moment(values.endJob.date)
     var jobName = `งาน${jobType.filter((v: any) => v.id == values.jobType)[0].jobTypeName} ${eJob.diff(sJob, 'days')} วัน`
 
-    createJob({
+    let createJobStatus = await createJob({
       variables: {
         userId: userId,
         jobName: jobName,
@@ -100,6 +100,10 @@ const CreateJobs = () => {
         lineEmail: ''
       }
     })
+
+    if(createJobStatus){
+      liffHelper.closeWindow()
+    }
   };
 
   return (
