@@ -91,12 +91,12 @@ export const FIND_JOB_MAPPING = gql`
 export const CREATE_JOB_MAPPING = gql`
   mutation createJobMapping(
     $jobId: String!,
-    $photographerId: String!,
+    $photographerUserId: String!,
     $price: Float!
   ){
     createJobMapping(
       jobId: $jobId,
-      photographerId: $photographerId,
+      photographerUserId: $photographerUserId,
       price: $price
     )
   }

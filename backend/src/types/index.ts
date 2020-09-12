@@ -257,9 +257,151 @@ schema.mutationType({
           {
             "type": "flex",
             "altText": "คุณค้นหาช่างภาพแล้ว !",
-            "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"text","text":"ประกาศงาน #0001","weight":"bold","size":"sm","color":"#000000"},{"type":"text","text":"งานแต่งงาน 1 วัน","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"จำนวนแขก 200 คน","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"ที่ VILLE DE BUA 414, ถนนเทพรักษ์ แขวงท่าแร้ง เขตบางเขน ห้อง BALLROOM","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xxl","spacing":"sm","contents":[{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"1,000 - 2,000 บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"*กรุณารับงานภายใน 10/08/2020","size":"sm","color":"#FF0000","flex":0,"align":"center"},{"type":"button","style":"primary","action":{"type":"uri","label":"รับงาน","uri":"https://liff.line.me/1654887993-95d05znD"},"margin":"md","color":"#013490"},{"type":"text","text":"ปฏิเสธงานนี้","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]},{"type":"separator","margin":"xxl"},{"type":"text","text":"ดูข้อเสนอราคาต่ำสุดของงานนี้","weight":"regular","size":"xs","margin":"xl","color":"#013490","align":"center"}]},"styles":{"footer":{"separator":true}}}`)
+            "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ประกาศงาน #${job.jobNo}","size":"sm","weight":"bold","align":"start"},{"type":"text","text":"กำลังค้นหาช่างภาพ","color":"#F36E0E","size":"xs","align":"end"}]},{"type":"text","text":"${job.jobName}","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"${job.guest && job.guest > 0 ? 'จำนวนแขก ' + job.guest + ' คน' : ''}","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"${job.location}","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xs","spacing":"sm","contents":[{"type":"text","text":"ปิดรับข้อเสนอ : 10 / 08 / 2020","size":"sm","color":"#FF0000","flex":0,"align":"start"},{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000","margin":"lg"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"${job.startBudget} - ${job.endBudget} บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"ยกเลิกงาน","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]}]},"styles":{"footer":{"separator":true}}}`)
+            // "contents": JSON.parse(`{
+            //   "type": "bubble",
+            //   "body": {
+            //     "type": "box",
+            //     "layout": "vertical",
+            //     "contents": [
+            //       {
+            //         "type": "box",
+            //         "layout": "horizontal",
+            //         "contents": [
+            //           {
+            //             "type": "text",
+            //             "text": "ประกาศงาน ${job.jobNo}",
+            //             "size": "sm",
+            //             "weight": "bold",
+            //             "align": "start"
+            //           },
+            //           {
+            //             "type": "text",
+            //             "text": "กำลังค้นหาช่างภาพ",
+            //             "color": "#F36E0E",
+            //             "size": "xs",
+            //             "align": "end"
+            //           }
+            //         ]
+            //       },
+            //       {
+            //         "type": "text",
+            //         "text": "${job.jobName}",
+            //         "weight": "bold",
+            //         "size": "xxl",
+            //         "margin": "md",
+            //         "color": "#000000"
+            //       },
+            //       {
+            //         "type": "text",
+            //         "text": "${job.guest && job.guest > 0 ? '' : 'จำนวนแขก ' + job.guest + 'คน'}",
+            //         "size": "md",
+            //         "color": "#000000",
+            //         "wrap": true,
+            //         "margin": "sm"
+            //       },
+            //       {
+            //         "type": "text",
+            //         "text": "ที่ ${job.location}",
+            //         "size": "xs",
+            //         "color": "#000000",
+            //         "wrap": true,
+            //         "margin": "sm"
+            //       },
+            //       {
+            //         "type": "box",
+            //         "layout": "vertical",
+            //         "margin": "xs",
+            //         "spacing": "sm",
+            //         "contents": [
+            //           {
+            //             "type": "text",
+            //             "text": "ปิดรับข้อเสนอ : ${job.limit}",
+            //             "size": "sm",
+            //             "color": "#FF0000",
+            //             "flex": 0,
+            //             "align": "start"
+            //           },
+            //           {
+            //             "type": "text",
+            //             "text": "ระยะเวลา",
+            //             "weight": "bold",
+            //             "size": "sm",
+            //             "color": "#000000",
+            //             "margin": "lg"
+            //           },
+            //           {
+            //             "type": "box",
+            //             "layout": "horizontal",
+            //             "contents": [
+            //               {
+            //                 "type": "text",
+            //                 "text": "เริ่ม ${job.startJob}",
+            //                 "size": "sm",
+            //                 "color": "#000000",
+            //                 "flex": 0
+            //               },
+            //               {
+            //                 "type": "text",
+            //                 "text": "${job.startJob} น.",
+            //                 "size": "sm",
+            //                 "color": "#000000",
+            //                 "align": "end"
+            //               }
+            //             ]
+            //           },
+            //           {
+            //             "type": "box",
+            //             "layout": "horizontal",
+            //             "contents": [
+            //               {
+            //                 "type": "text",
+            //                 "text": "ถึง ${job.endJob}",
+            //                 "size": "sm",
+            //                 "color": "#000000",
+            //                 "flex": 0
+            //               },
+            //               {
+            //                 "type": "text",
+            //                 "text": "${job.endJob} น.",
+            //                 "size": "sm",
+            //                 "color": "#000000",
+            //                 "align": "end"
+            //               }
+            //             ]
+            //           },
+            //           {
+            //             "type": "text",
+            //             "text": "${job.startBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} - ${job.endBudget.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")} บาท / วัน",
+            //             "weight": "bold",
+            //             "size": "lg",
+            //             "margin": "lg",
+            //             "color": "#000000",
+            //             "align": "center"
+            //           },
+            //           {
+            //             "type": "text",
+            //             "text": "ยกเลิกงาน",
+            //             "size": "xs",
+            //             "color": "#000000",
+            //             "flex": 0,
+            //             "align": "center",
+            //             "margin": "lg",
+            //             "decoration": "underline"
+            //           }
+            //         ]
+            //       }
+            //     ]
+            //   },
+            //   "styles": {
+            //     "footer": {
+            //       "separator": true
+            //     }
+            //   }
+            // }`)
           }
         ]
+        console.log(messageToCustomer[0].contents.body.contents)
         const sendToUser = await sendMessage(args.userId, messageToCustomer)
 
         //Send flex message to all photographers (#Poppy2)
@@ -288,10 +430,16 @@ schema.mutationType({
       type: 'Boolean',
       args: {
         jobId: stringArg({ required: true }),
-        photographerId: stringArg({ required: true }),
+        photographerUserId: stringArg({ required: true }),
         price: floatArg({ required: true }),
       },
       resolve: async (_, args, ctx) => {
+        const photographer = await prisma.photographer.findOne({
+          where: {
+            userId: args.photographerUserId
+          }
+        })
+
         const jobMapping = await prisma.jobMapping.create({
           data: {
             jobId: args.jobId,
@@ -299,7 +447,7 @@ schema.mutationType({
             status: 'ACCEPTED',
             photographer: {
               connect: {
-                id: args.photographerId,
+                id: photographer.id,
               },
             },
           },
@@ -323,12 +471,6 @@ schema.mutationType({
                 "text": `ส่งคำขอรับงาน #${job.jobNo} เรียบร้อยกรุณารอการตอบรับจากลูกค้าภายในวันที่ ${moment.utc(job.limit).format('DD/MM/YYYY')}`
               }
             ]
-
-            const photographer = await prisma.photographer.findOne({
-              where: {
-                id: args.photographerId
-              }
-            })
 
             await sendMessage((photographer ? photographer.userId : ''), messageToPhotographer)
 
