@@ -36,6 +36,7 @@ class liffHelper {
             liff.getProfile()
               .then(pf => {
                 profile = pf;
+                // profile.email = liff.getDecodedIDToken().email
                 resolve(profile);
               })
               .catch((err) => {

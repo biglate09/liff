@@ -11,10 +11,10 @@ export default () => (
   <>
   <Fragment>
     <Switch>
-      <Route exact path="/home" component={Home} />
-      <Route exact path="/" component={CreateJobs} />
+      <Route exact path="/quotation" component={Home} />
+      <Route exact path="/createjobs" component={CreateJobs} />
       <Route exact path="/register" component={Register} />
-      <Route exact path="/quotation" component={Quotation} />
+      <Route exact path="/" component={Quotation} />
       <Route exact path="/myjobs" component={MyJobs} />
     </Switch>
   </Fragment>
