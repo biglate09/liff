@@ -20,7 +20,7 @@ import 'antd/dist/antd.css';
 // } from '@apollo/react-hooks'
 
 const link = createHttpLink({
-  uri: 'https://eb691da078a3.ngrok.io/graphql',
+  uri: 'https://1832806d70be.ngrok.io/graphql',
   // uri: 'http://localhost:112/graphql',
 });
 const cache = new InMemoryCache();

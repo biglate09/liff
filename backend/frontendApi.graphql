@@ -266,7 +266,7 @@ scalar Json
 
 type Mutation {
   createJob(detail: String, displayName: String!, email: String, endBudget: Float!, endJob: DateTime, guest: Int, jobName: String!, jobTypeId: String!, limit: DateTime, lineEmail: String!, location: String!, startBudget: Float!, startJob: DateTime, tel: String!, userId: String!): Boolean
-  createJobMapping(jobId: String!, photographerId: String!, price: Float!): Boolean
+  createJobMapping(jobId: String!, photographerUserId: String!, price: Float!): Boolean
   customerConfirmJob(jobId: String!, photographerId: String!): Boolean
   helloworld: String
   managePhotographer(bank: String!, bankAccountName: String!, bankAccountNumber: String!, email: String!, imgUrl: String!, moreInfoUrl: String!, name: String!, tel: String!, userId: String!): Boolean
@@ -396,7 +396,8 @@ input PortfolioWhereInput {
 }
 
 type Query {
-  findJobMapping(jobId: String!, photographerId: String!): JobMapping
+  findJob(jobId: String!): Job
+  findJobMapping(jobId: String!, photographerUserId: String!): JobMapping
   helloworld: String
   jobTypes(after: JobTypeWhereUniqueInput, before: JobTypeWhereUniqueInput, first: Int, last: Int, orderBy: [JobTypeOrderByInput!], where: JobTypeWhereInput): [JobType!]!
 }
