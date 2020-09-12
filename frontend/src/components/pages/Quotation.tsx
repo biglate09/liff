@@ -16,6 +16,7 @@ const Quotation = () => {
 
   const [userId, setUserId] = useState('U1a85d09a5b0f102277500c1f1b2026a8')
   const [jobId, setjobId] = useState('47581143-838c-4e76-9a67-e71e969e55fe')
+  const [message, setMessage] = useState('รับงาน x วัน #0000 ในราคา x,xxx บาท/วัน')
 
   liffHelper.getProfile()
     .then(profile => {
@@ -49,6 +50,11 @@ const Quotation = () => {
     // fetchPolicy: 'network-only',
     onCompleted:(sre)=>{
       window.alert('success')
+      liffHelper.sendMessages([{
+        type:'text',
+        text: message
+      }])
+      liffHelper.closeWindow()
     },
     onError: (err) => {
       window.alert(err)
@@ -57,6 +63,7 @@ const Quotation = () => {
   
   const onFinish = (values:any) => {
     console.log(values)
+    setMessage(`รับ${job_data && job_data.jobName} #${job_data && job_data.jobNo} ในราคา ${new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(values.price)} บาท/วัน`)
     JOB_MAPPING_CREATE({variables:{
       jobId: jobId,
       photographerUserId: userId,
@@ -70,9 +77,10 @@ const Quotation = () => {
   }else{
     return (
       <body>
-        <title>กำหนดราคา #0001</title>
+        <title>กำหนดราคา #{job_data && job_data.jobNo}</title>
         <div style={{ margin: '1.5rem' }}>
-    <p style={{ fontSize: '1.8em', fontWeight: 'bold', marginTop: '1rem', marginBottom: '0' }}>{job_data && job_data.jobName}</p>
+          <div style={{marginTop: '1rem'}}>กำหนดราคา #{job_data && job_data.jobNo}</div>
+          <p style={{ fontSize: '1.8em', fontWeight: 'bold', marginBottom: '0' }}>{job_data && job_data.jobName}</p>
           <p style={{ fontWeight: 'bold' }}>{new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(job_data && job_data.startBudget)} - {new Intl.NumberFormat('en-IN', { maximumSignificantDigits: 3 }).format(job_data && job_data.endBudget)} บาท / วัน</p>
           <Form onFinish={onFinish}>
             <Form.Item label="เสนอราคา (บาท/วัน)"
