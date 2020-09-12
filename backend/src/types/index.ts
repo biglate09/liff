@@ -100,7 +100,7 @@ schema.queryType({
       },
       resolve: async (_, args, ctx) => {
         const photographer = await prisma.photographer.findOne({
-          where:{
+          where: {
             userId: args.photographerUserId
           }
         })
@@ -117,6 +117,23 @@ schema.queryType({
         })
 
         return jobMapping
+      }
+    })
+
+    //FIND_JOB
+    t.field('findJob', {
+      type: 'Job',
+      args: {
+        jobId: stringArg({ required: true }),
+      },
+      resolve: async (_, args, ctx) => {
+        const job = await prisma.job.findOne({
+          where: {
+            id: args.jobId
+          }
+        })
+
+        return job
       }
     })
 
@@ -259,11 +276,13 @@ schema.mutationType({
         }
 
         //Send flex message to customer (#Poppy1)
+        let jobStartBudget = job.startBudget.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
+        let jobEndBudget = job.endBudget.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,")
         const messageToCustomer = [
           {
             "type": "flex",
             "altText": "คุณค้นหาช่างภาพแล้ว !",
-            "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ประกาศงาน #${job.jobNo}","size":"sm","weight":"bold","align":"start"},{"type":"text","text":"กำลังค้นหาช่างภาพ","color":"#F36E0E","size":"xs","align":"end"}]},{"type":"text","text":"${job.jobName}","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"${job.guest && job.guest > 0 ? 'จำนวนแขก ' + job.guest + ' คน' : ''}","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"${job.location}","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xs","spacing":"sm","contents":[{"type":"text","text":"ปิดรับข้อเสนอ : 10 / 08 / 2020","size":"sm","color":"#FF0000","flex":0,"align":"start"},{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000","margin":"lg"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"07:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง 15/08/2020","size":"sm","color":"#000000","flex":0},{"type":"text","text":"17:00 น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"${job.startBudget} - ${job.endBudget} บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"ยกเลิกงาน","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]}]},"styles":{"footer":{"separator":true}}}`)
+            "contents": JSON.parse(`{"type":"bubble","body":{"type":"box","layout":"vertical","contents":[{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ประกาศงาน #${job.jobNo}","size":"sm","weight":"bold","align":"start"},{"type":"text","text":"กำลังค้นหาช่างภาพ","color":"#F36E0E","size":"xs","align":"end"}]},{"type":"text","text":"${job.jobName}","weight":"bold","size":"xxl","margin":"md","color":"#000000"},{"type":"text","text":"${job.guest && job.guest > 0 ? 'จำนวนแขก ' + job.guest + ' คน' : ''}","size":"md","color":"#000000","wrap":true,"margin":"sm"},{"type":"text","text":"${job.location}","size":"xs","color":"#000000","wrap":true,"margin":"sm"},{"type":"box","layout":"vertical","margin":"xs","spacing":"sm","contents":[{"type":"text","text":"ปิดรับข้อเสนอ : ${moment(job.limit).format('DD / MM / YYYY')}","size":"sm","color":"#FF0000","flex":0,"align":"start"},{"type":"text","text":"ระยะเวลา","weight":"bold","size":"sm","color":"#000000","margin":"lg"},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"เริ่ม : ${moment(job.startJob).format('DD / MM / YYYY')}","size":"sm","color":"#000000","flex":0},{"type":"text","text":"${moment(job.startJob).format('HH:mm')} น.","size":"sm","color":"#000000","align":"end"}]},{"type":"box","layout":"horizontal","contents":[{"type":"text","text":"ถึง : ${moment(job.endJob).format('DD / MM / YYYY')}","size":"sm","color":"#000000","flex":0},{"type":"text","text":"${moment(job.endJob).format('HH:mm')} น.","size":"sm","color":"#000000","align":"end"}]},{"type":"text","text":"${jobStartBudget} - ${jobEndBudget} บาท / วัน","weight":"bold","size":"lg","margin":"lg","color":"#000000","align":"center"},{"type":"text","text":"ยกเลิกงาน","size":"xs","color":"#000000","flex":0,"align":"center","margin":"lg","decoration":"underline"}]}]},"styles":{"footer":{"separator":true}}}`)
             // "contents": JSON.parse(`{
             //   "type": "bubble",
             //   "body": {
@@ -453,7 +472,7 @@ schema.mutationType({
             status: 'ACCEPTED',
             photographer: {
               connect: {
-                id: photographer.id,
+                id: photographer ? photographer.id : '',
               },
             },
           },

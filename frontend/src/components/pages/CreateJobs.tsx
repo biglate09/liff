@@ -79,7 +79,7 @@ const CreateJobs = () => {
     console.log(values);
     var sJob = moment(values.startJob.date)
     var eJob = moment(values.endJob.date)
-    var jobName = `งาน${jobType.filter((v: any) => v.id == values.jobType)[0].jobTypeName} ${eJob.diff(sJob, 'days')} วัน`
+    var jobName = `งาน${jobType.filter((v: any) => v.id == values.jobType)[0].jobTypeName} ${eJob.diff(sJob, 'days') + 1} วัน`
 
     let createJobStatus = await createJob({
       variables: {
