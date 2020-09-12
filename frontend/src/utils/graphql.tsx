@@ -69,6 +69,33 @@ export const FIND_JOB_MAPPING = gql`
   }
 `
 
+export const FIND_JOB = gql`
+  query findJob($jobId: String!){
+    findJob(jobId: $jobId){
+      id,
+      createdAt,
+      updatedAt,
+      jobNo,
+      jobTypeId,
+      startJob,
+      endJob,
+      limit,
+      location,
+      detail,
+      tel,
+      email,
+      guest,
+      startBudget,
+      endBudget,
+      status,
+      customerId,
+      photographerId,
+      slip,
+      jobName
+    }
+  }
+`
+
 // export const FIND_PHOTOGRAPHER = gql`
 //   query findPhotographerJobs(
 //     $userId: String!,
