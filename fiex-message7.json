@@ -1,0 +1,28 @@
+{
+  "type": "bubble",
+  "body": {
+    "type": "box",
+    "layout": "vertical",
+    "contents": [
+      {
+        "type": "text",
+        "text": "ได้รับรูปภาพสลิปแล้ว "
+      },
+      {
+        "type": "text",
+        "text": "กำลังตรวจสอบหลักฐาน",
+        "weight": "bold",
+        "size": "xl"
+      },
+      {
+        "type": "text",
+        "text": "หากไม่ได้รับการยืนยัน",
+        "margin": "xxl"
+      },
+      {
+        "type": "text",
+        "text": "กรุณาติดต่อ 0821920192"
+      }
+    ]
+  }
+}
