@@ -14,8 +14,8 @@ import { FIND_JOB_MAPPING, FIND_JOB, CREATE_JOB_MAPPING } from '../../utils/grap
 
 const Quotation = () => {
 
-  const [userId, setUserId] = useState('U1a85d09a5b0f102277500c1f1b2026a8')
-  const [jobId, setjobId] = useState('47581143-838c-4e76-9a67-e71e969e55fe')
+  const [userId, setUserId] = useState('U8092eefd84fd7db732e2723587249c6d')
+  const [jobId, setjobId] = useState('bdfc95a0-8c64-47f4-b0c3-7a0dce7e3c4b')
 
   liffHelper.getProfile()
     .then(profile => {
@@ -57,11 +57,15 @@ const Quotation = () => {
   
   const onFinish = (values:any) => {
     console.log(values)
-    JOB_MAPPING_CREATE({variables:{
+    const mappingJob = JOB_MAPPING_CREATE({variables:{
       jobId: jobId,
       photographerUserId: userId,
       price: parseFloat(values.price)
     }})
+    
+    if(mappingJob){
+      liffHelper.closeWindow()
+    }
   }
   if(find_mapping){
     liffHelper.closeWindow()
